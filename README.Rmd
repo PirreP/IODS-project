@@ -2,4 +2,4 @@
 
 So far we have learned to create Rmarkdown files and to knit these into html pages.Rmarkdown seems quite handy for sharing notebooks with both code and text :).
 
-Link to my course-diary: (https://*your-github_username*.github.io/IODS-project/)
+Link to my course-diary: (https://PirreP.github.io/IODS-project/)
