@@ -1,8 +1,8 @@
 
-# About the project
+## About the project
 
 *Write a short description about the course and add a link to your github repository here. This is an R markdown (.Rmd) file so you can use R markdown syntax. See the 'Useful links' page in the mooc area (chapter 1) for instructions.*
 
-Hopefully this course gives me some new tools for analysing large datasets. Would be cool to finally learn to use GitHub as well :'D.
+Hopefully this course gives me some new tools for analysing large datasets. Would be cool to finally learn to use GitHub as well!
 
-My github repository can be found ![here] https://github.com/PirreP/IODS-project/
+**My github repository can be found [here](https://github.com/PirreP/IODS-project/) .**
