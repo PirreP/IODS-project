@@ -2,4 +2,4 @@
 
 So far we have learned to create Rmarkdown files and to knit these into html pages.
 
-Link to my course-diary: (https://PirreP.github.io/IODS-project/)
+Link to my course-diary: https://PirreP.github.io/IODS-project/
