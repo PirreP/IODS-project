@@ -1,5 +1,5 @@
 ## Open Data Science course
 
-So far we have learned to create Rmarkdown files and to knit these into html pages.Rmarkdown seems quite handy for sharing notebooks with both code and text :).
+So far we have learned to create Rmarkdown files and to knit these into html pages.
 
 Link to my course-diary: (https://*your-github_username*.github.io/IODS-project/)
