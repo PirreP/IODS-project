@@ -1,7 +1,92 @@
-# Insert chapter 2 title here
+# Linear Regression / week 2
 
 *Describe the work you have done this week and summarize your learning.*
 
-- Describe your work and results clearly. 
-- Assume the reader has an introductory course level understanding of writing and reading R code as well as statistical methods
-- Assume the reader has no previous knowledge of your data or the more advanced methods you are using  
+```{r, echo=FALSE}
+# access all libraries here:
+library(GGally)
+library(ggplot2)
+```
+*note: should check how to hide the library access from the html, there's no need to display it. Also, why is ggplot2 shown her but GGally is not?*
+
+In this course we use a dataset that is a subset of another dataset with more variables. The original dataset was used to study learning and teaching of statistics. The variables in this dataset (other than age, gender and points), are means of answers to questions that related to the specific themes (such as attitude).
+Our dataset has 166 subjects and 8 variables. 17 subjects were excluded because of not having any exam points. 
+
+Let's read in the dataset from the data folder
+```{r}
+learning2014 <- read.csv("./data/learning2014.csv")
+```
+
+**Visualization of the data in a matrix of plots**
+Genders have their own color (blue=male, pink=female). 
+
+```{r}
+ggpairs(learning2014, mapping = aes(col=gender, alpha=0.3), lower = list(combo = wrap("facethist", bins = 20)), progress=FALSE)
+
+```
+
+From the correlations we can see that attitude seems to have some correlation with exam points. This can also be seen from the scatterplots, where there seems to be a linear relationship between points and attitude.Other variables don't seem to have clear correlation. 
+
+**Summaries of the data**
+ 
+```{r}
+summary(learning2014)
+```
+
+From the summaries (and plots) we can see that there is almost twize as much females as there are males. 
+The mean age is 25.5 years, but the subjects varied from 17-55 years old.
+
+
+**Regression model with three explanatory variables (attitude, stra and surf) and exam points as the target**
+The explanatory variables were chosen based on their correlation with the points in the plot matrix.
+
+```{r}
+model <- lm(Points~ Attitude + stra + surf, data= learning2014)
+summary(model)
+```
+
+From the summary, we can see that the only attitude has a statisticallyl significant effect on the model (p-value<<0.05). Hence we can remove stra and surf variables from the model. The significance of the individual coefficients of the variables is tested by using t-test, that compares each coefficient separately against the null hypothesis that the specific coefficeint would be zero. 
+
+We can also see that according to F-test, which tests the whole model against a model without any variables (=all coefficients are zero), the model is statistically signigficant (we can reject the null hypothesis that none of the variables would have any effect on points).
+
+**New model with only attitude as a explanatory variable:**
+
+```{r}
+model <- lm(Points~ Attitude, data= learning2014)
+summary(model)
+```
+We can see that the explanatory power of the model did not increase greatly (actually it decreased a bit according to the R-squared). However, the F-statistics became a bit better, and now we have less parameters that could increase the noise in the model.
+
+Based on this model, there is a 0.35 slope in the linear model where attitude is on the x-axis and points are on the y-axis. In other words, when attitude increases by one unit, points increase by 0.35 units by average. The standard error is 0.06, which tells that by average, the points don't fall very far from the fitted regression line. This can also be seen from the small p-value.
+
+The R squared value is not very high (0.19). This means that the variance in our explanatory variable only explains around 20% of the variance in the target variable. 
+
+Let's now go through the assumptions of the model and check their validity by using graphs.
+
+**QQ-plot for checking that the errors of the model are normally distributed**
+```{r}
+plot(model, which=c(2))
+```
+
+The standardized residuals seem to fall on the line quite well, so we can assume that the errors are normally distributed (not perfect fit though, there's a reason to be careful with this assumption).
+
+**Residuals vs fitted values -graph for checking constant variance of errors**
+```{r}
+plot(model, which=c(1))
+```
+There seems to be a decrease in the spreading of the residuals when the fitted values are very large, but this observation is based only on a few datapoints so I wouldn't say it's a clear sign against our assumption of constant variance of errors.
+
+**Residuals vs leverage -graph for checking if a single pbservation has especially high impact on the model**
+
+```{r}
+plot(model, which=c(5))
+```
+
+No single point stands out from the graph, we are not likely to have observations that would have especially high impact on the model.
+
+## **Summary of the learning outcomes**
+
+It was cool to learn new ways and very efficient ways of visualizing data by using GGally. 
+I also think that I have a better understanding of the different values that come out when you summarize your model with R. (I hope I got them right :D).
+I'm not a big fan of this rmarkdown yet because finding a way around all the problems took quite a lot of time, but I think it will be a very handy tool for displaying data when I get more used to it. 
+
