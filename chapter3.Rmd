@@ -1,0 +1,124 @@
+```{r chapter-2-setup, cache = FALSE, echo = FALSE, message = FALSE, warning = FALSE}
+library(ggplot2)
+library(GGally)
+library(tidyr) 
+library(dplyr)
+library(gridExtra)
+```
+
+# Week 3 - Logistic Regression
+
+```{r load-data, echo = FALSE, message= FALSE, cache = TRUE}
+alc <- read.csv('./data/alc.csv', sep=',', header=TRUE)
+```
+
+This week we are doing logistic regression with a dataset that has information about portuquese sudents' school performance. The dataset has the following columns:
+
+```{r print column names, echo=FALSE, warning=FALSE}
+colnames(alc)
+```
+The data is a mean of two questionaires that contain the students' performance in maths and portuquese classes. Alc_use is the average of alcohol use during week days and weekends, and high_use was defined as alc_use>2. 
+For more information about the original datasets, see P. Cortez and A. Silva (2008)
+
+Our aim with this dataset is to study the relationship between some of the variables and alchol consumption. Let's hypothesize that the following variables have the following correlations with alcohol consumption:
+
+-famrel [quality of family relationships (numeric: from 1 - very bad to 5 - excellent)] : better relationships predict smaller alcohol consumption
+-  Fedu [father's education (numeric: 0 - none, 1 - primary education (4th grade), 2 - 5th to 9th grade, 3 - secondary education or 4 - higher education)]:
+high education predicts smaller alcohol consumption
+-sex [student's sex (binary: 'F' - female or 'M' - male)]:
+males have a higher alcohol consumption than females
+- absences [number of school absences (numeric: from 0 to 93)]:
+high number of absences correlate high alchohol use
+- G3 [final grade (numeric: from 0 to 20, output target)]:
+bad grades correlate with high alcohol consumption
+-
+
+
+Let's start by studying the distribution of these variables:
+
+```{r choose interesting variables, echo=FALSE, warning=FALSE}
+# choose variables of interest and make a dataframe of them
+interesting_variables <- c('sex', 'absences', 'G3', 'famrel', 'Fedu', 'alc_use', 'high_use')
+interesting <- select(alc, one_of(interesting_variables))
+```
+
+```{r draw boxplots, echo=FALSE}
+# draw a bar plot of each variable to investigate the distribution (gather makes key-value pairs)
+gather(interesting) %>% ggplot(aes(value)) + facet_wrap("key", scales = "free") +geom_bar()
+
+```
+
+Let's see some summary statistics
+
+```{r summary statistics, echo=FALSE, warning=FALSE}
+interesting %>% group_by(sex, high_use) %>% summarise(count= n(),mean_grade = mean(G3), mean_absences = mean(absences), mean_Fedu = mean(Fedu), mean_famrel= mean(famrel))
+```
+We can get a better understand of the variances and differences between genders by drawing boxplots
+
+```{r boxplots, echo=FALSE}
+variables <- interesting_variables[!colnames(interesting) %in% c('sex', 'alc_use', 'high_use')]
+par(mfrow=c(2,2))
+for (column in variables){
+  g <- ggplot(interesting, aes(x = high_use, y = get(column), col=sex))
+
+  plot(g + geom_boxplot() + ylab(column) + ggtitle(paste(column, "by alcohol consumption and sex")))
+
+}
+
+
+```
+
+From the above visualizations we can make the following interpretations:
+1) the final grades in males seem to have a relationship with alcohol consumption
+2) It's not evident from the boxplots (bad scaling), but according to summary statistics, also absences seem to have a positive correlation with alcohol consumption in both genders.
+3) Alcohol consumption is higher in males than in females.
+4) famrel might have slight anti-correlation with alcohol consumption
+5) father's education doesn't affect alcohol consumption 
+
+
+# Logistic regression
+
+```{r logistic regression model, echo=FALSE, comment=FALSE}
+m <- glm(high_use ~ Fedu + famrel + G3 + absences +sex, data = interesting, family = "binomial")
+summary(m)
+
+# compute odds ratios (OR)
+OR <- coef(m) %>% exp
+
+# compute confidence intervals (CI)
+CI <- confint(m) %>% exp
+# print out the odds ratios with their confidence intervals
+cbind(OR, CI)
+```
+Interpretation of results: 
+1) According to the ods ratios and their confidence intervals, students with good familyrelationships are less likely to have high alcohol consumption. 
+2) Students with good grades are also slightly less likely to use high amounts of alcohol.
+3) high number of absences predicts slighthy higher probability for high alcohol consumption
+4) males are more likely to have higher consumption than females
+
+# Predicting alcohol consumption with our model
+
+```{r make predictions, echo=FALSE}
+# predict() the probability of high_use
+probabilities <- predict(m, type = "response")
+
+# add the predicted probabilities to 'interesting'
+interesting <- mutate(interesting, probability = probabilities)
+
+# use the probabilities to make a prediction of high_use
+interesting <- mutate(interesting, prediction = probability > 0.5)
+
+
+# tabulate the target variable versus the predictions
+table(high_use = interesting$high_use, prediction = interesting$prediction)
+
+table(high_use = interesting$high_use, prediction = interesting$prediction) %>% prop.table () %>% addmargins()
+```
+From the tables above we see that our model predicted quite well the cases where high_use was false (only 4 prosent were false positives). True cases were not predicted as effectively (20% were missed trues).
+The total training error is around 25%, so 75% of the cases were predicted correctly.
+
+# References
+
+P. Cortez and A. Silva. Using Data Mining to Predict Secondary School Student Performance. In A. Brito and J. Teixeira Eds., Proceedings of 5th FUture BUsiness TEChnology Conference (FUBUTEC 2008) pp. 5-12, Porto, Portugal, April, 2008, EUROSIS, ISBN 978-9077381-39-7
+
+
