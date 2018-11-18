@@ -22,12 +22,12 @@ For more information about the original datasets, see P. Cortez and A. Silva (20
 
 Our aim with this dataset is to study the relationship between some of the variables and alchol consumption. Let's hypothesize that the following variables have the following correlations with alcohol consumption:
 
--famrel [quality of family relationships (numeric: from 1 - very bad to 5 - excellent)] : better relationships predict smaller alcohol consumption
+- famrel [quality of family relationships (numeric: from 1 - very bad to 5 - excellent)] : better relationships predict smaller alcohol consumption
 
 -  Fedu [father's education (numeric: 0 - none, 1 - primary education (4th grade), 2 - 5th to 9th grade, 3 - secondary education or 4 - higher education)]:
 high education predicts smaller alcohol consumption
 
--sex [student's sex (binary: 'F' - female or 'M' - male)]:
+- sex [student's sex (binary: 'F' - female or 'M' - male)]:
 males have a higher alcohol consumption than females
 
 - absences [number of school absences (numeric: from 0 to 93)]:
@@ -40,7 +40,7 @@ bad grades correlate with high alcohol consumption
 
 Let's start by studying the distribution of these variables:
 
-```{r choose interesting variables, echo=FALSE, warning=FALSE}
+```{r choose interesting variables, echo=FALSE, warning=FALSE, comment=FALSE}
 # choose variables of interest and make a dataframe of them
 interesting_variables <- c('sex', 'absences', 'G3', 'famrel', 'Fedu', 'alc_use', 'high_use')
 interesting <- select(alc, one_of(interesting_variables))
