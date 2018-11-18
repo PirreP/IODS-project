@@ -23,15 +23,19 @@ For more information about the original datasets, see P. Cortez and A. Silva (20
 Our aim with this dataset is to study the relationship between some of the variables and alchol consumption. Let's hypothesize that the following variables have the following correlations with alcohol consumption:
 
 -famrel [quality of family relationships (numeric: from 1 - very bad to 5 - excellent)] : better relationships predict smaller alcohol consumption
+
 -  Fedu [father's education (numeric: 0 - none, 1 - primary education (4th grade), 2 - 5th to 9th grade, 3 - secondary education or 4 - higher education)]:
 high education predicts smaller alcohol consumption
+
 -sex [student's sex (binary: 'F' - female or 'M' - male)]:
 males have a higher alcohol consumption than females
+
 - absences [number of school absences (numeric: from 0 to 93)]:
 high number of absences correlate high alchohol use
+
 - G3 [final grade (numeric: from 0 to 20, output target)]:
 bad grades correlate with high alcohol consumption
--
+
 
 
 Let's start by studying the distribution of these variables:
