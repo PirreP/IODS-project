@@ -73,10 +73,15 @@ for (column in variables){
 ```
 
 From the above visualizations we can make the following interpretations:
+
 1) the final grades in males seem to have a relationship with alcohol consumption
-2) It's not evident from the boxplots (bad scaling), but according to summary statistics, also absences seem to have a positive correlation with alcohol consumption in both genders.
-3) Alcohol consumption is higher in males than in females.
+
+2) It's not evident from the boxplots (bad scaling), but according to summary statistics, also absences seem to have a positive correlation with alcohol consumption in both genders
+
+3) Alcohol consumption is higher in males than in females
+
 4) famrel might have slight anti-correlation with alcohol consumption
+
 5) father's education doesn't affect alcohol consumption 
 
 
@@ -95,9 +100,13 @@ CI <- confint(m) %>% exp
 cbind(OR, CI)
 ```
 Interpretation of results: 
-1) According to the ods ratios and their confidence intervals, students with good familyrelationships are less likely to have high alcohol consumption. 
-2) Students with good grades are also slightly less likely to use high amounts of alcohol.
+
+1) According to the ods ratios and their confidence intervals, students with good familyrelationships are less likely to have high alcohol consumption
+
+2) Students with good grades are also slightly less likely to use high amounts of alcohol
+
 3) high number of absences predicts slighthy higher probability for high alcohol consumption
+
 4) males are more likely to have higher consumption than females
 
 # Predicting alcohol consumption with our model
