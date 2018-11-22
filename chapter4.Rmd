@@ -1,0 +1,74 @@
+## Clustering and classification / week 4
+
+```{r access libraries, load the Boston dataset and explore, echo=FALSE, eval=FALSE}
+# access the MASS package
+library(MASS)
+library(ggplot2)
+library(GGally)
+# load the data
+data("Boston")
+
+# explore dataset
+str(Boston)
+summary(Boston)
+
+pairs(Boston)
+```
+
+This week were using a dataset called 'Boston' from the MASS R package. 'Boston' Has the housing values of Boston suburbs, including 14 variables that describe the value of the apartments and the socioeconomical status of the area, such as rate of criminality, per capita crime rate by tow, taxes and pupil-teacher rate per town. There are 506 rows in the dataset. The values are numerical, some of them being integers. More detailed description of the varibales can be found in the R documentation[https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html]. 
+
+# Scaled data
+```{r scale data and sumamrize variables, eval=FALSE}
+# scale the data by substracting column means from the values and by dividing with the standard deviation
+
+boston_scaled <- scale(Boston)
+summary(boston_scaled)
+```
+
+We can see that the mean is now 0 for each variable, and that variables below the mean have negative values and variables above mean have positive values. The scaling of the data makes the different variables comparable.
+
+Next we want to make a model that predicts the criminality in certain areas based on the other variables. For this purpose we first replace the 'crime' variable with a factorized variable, that we want to predict eventually. The break points for the crime variable are set to the quantiles. 
+
+We also need to divide the data into a training and test sets, so that we can use part of the data to train our model, and then test the validity of the model with the test data. 80% of the data is randomly assigned to training set and the rest of the data is used for testing.
+
+```{r replace crim with factorized values, eval=FALSE, echo=FALSE}
+# summary of the scaled crime rate
+summary(boston_scaled$crim)
+
+# create a quantile vector of crim and print it
+bins <- quantile(boston_scaled$crim)
+
+# create a categorical variable 'crime'
+labels = c("low", "med_low", "med_high", "high")
+crime <- cut(boston_scaled$crim, breaks = bins, include.lowest = TRUE, label=labels)
+
+# look at the table of the new factor crime
+table(crime)
+
+# remove original crim from the dataset
+boston_scaled <- dplyr::select(boston_scaled, -crim)
+
+# add the new categorical value to scaled data
+boston_scaled <- data.frame(boston_scaled, crime)
+
+```
+
+```{r create trainign and test data sets}
+
+# number of rows in the Boston dataset 
+n <- nrow(boston_scaled)
+
+# choose randomly 80% of the rows
+ind <- sample(n,  size = n * 0.8)
+
+# create train set (80% od the data)
+train <- boston_scaled[ind,]
+
+# create test set (20% of the data)
+test <- boston_scaled[-ind,]
+
+# save the correct classes from test data
+correct_classes <- test$crime
+
+# remove the crime variable from test data
+test <- dplyr::select(test, -crime)
