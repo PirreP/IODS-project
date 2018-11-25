@@ -2,9 +2,9 @@
 
 This week were using a dataset called 'Boston' from the MASS R package. 'Boston' Has the housing values of Boston suburbs, including 14 variables that describe the value of the apartments and the socioeconomical status of the area, such as rate of criminality, per capita crime rate by tow, taxes and pupil-teacher rate per town. There are 506 rows in the dataset. The values are numerical, some of them being integers. More detailed description of the varibales can be found in the [R documentation](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html). 
 
-# Boston dataset
+# Boston dataset summary
 
-```{r access libraries, load the Boston dataset and explore, echo=FALSE}
+```{r access libraries, load the Boston dataset and explore, echo=FALSE, fig.width = 12, fig.height = 12}
 # access the MASS package
 library(MASS)
 library(ggplot2)
@@ -16,7 +16,7 @@ data("Boston")
 str(Boston)
 summary(Boston)
 
-pairs(Boston)
+pairs(Boston, main= 'Boston paired scatterplots')
 ```
 
 
@@ -30,7 +30,8 @@ boston_scaled_orig <- scale(Boston)
 summary(boston_scaled_orig)
 ```
 
-We can see that the mean is now 0 for each variable, and that variables below the mean have negative values and variables above mean have positive values. The scaling of the data makes the different variables comparable.
+
+We can see that after scaling, the mean is 0 for each variable, and that variables below the mean have negative values and variables above mean have positive values. The scaling of the data makes the different variables comparable.
 
 Next we want to make a model that predicts the criminality in certain areas based on the other variables. For this purpose we first replace the 'crime' variable with a factorized variable, that we want to predict eventually. The break points for the crime variable are set to the quantiles and the classes are named as 'high', 'med_high', 'med_low' and 'low'.
 
@@ -80,9 +81,10 @@ correct_classes <- test$crime
 test <- dplyr::select(test, -crime)
 
 ```
+
 # Linear discriminant analysis and LDA biplot
 
-```{r plot LDA biplot, echo=FALSE}
+```{r plot LDA biplot, echo=FALSE, fig.width = 12, fig.height = 12}
 
 # linear discriminant analysis
 lda.fit <- lda(crime~ ., data = train)
@@ -107,6 +109,7 @@ classes <- as.numeric(train$crime)
 plot(lda.fit, dimen = 2, main='LDA biplot')
 lda.arrows(lda.fit, myscale = 1)
 ```
+
 # Using the model to predict criminality classes in the test dataset
 ```{r predict the crime classes in the test dataset, echo=FALSE}
 # predict classes with test data
@@ -120,8 +123,9 @@ From the plot above we can see that areas with high criminality rate form their 
 
 From the cross tabulation we can see that the model predicts high criminality very well (as can also be predicted from the plots; high criminality forms its own cluster). Also med_low was predicted quite well (only 3 false positives). However, if the model classifies an observation as med_low, it is very hard to know whether the prediction is correct, as more than half of these predictions are false and the model seems to have a bias towards classifying observations into the med_low class. 
 
+
 # K-means clustering
-```{r k-means clustering, echo=FALSE}
+```{r k-means clustering, echo=FALSE, fig.width = 12, fig.height = 12}
 # calculate the euclidean distances from the original scaled Boston dataset
 dist_eu <- dist(boston_scaled_orig)
 
@@ -140,8 +144,10 @@ twcss <- sapply(1:k_max, function(k){kmeans(boston_scaled_orig, k)$tot.withinss}
 # visualize the results.
 qplot(x = 1:k_max, y = twcss, geom = 'line', main='total within sum of squares')
 
+
 # k-means clustering
 km <-kmeans(boston_scaled_orig, centers = 2)
+
 
 # plot the Boston dataset with clusters
 pairs(boston_scaled_orig, col = km$cluster, main= 'Boston data (2 clusters
@@ -150,5 +156,6 @@ pairs(boston_scaled_orig[,5:10], col = km$cluster, main= 'subset of Boston data 
 )')
 
 ```
+
 
 Here we did K-means clustering based on euclidean distances. The optimal number of clusters was chosen by finding the point where the total within sum of squares had a great drop. Based on this method, the optimal number of clusters is 2. From the graphs we can see that these two clusters deviate from each other mainly in the 'rad' and 'tax' variables, but the clusters can also be seen in other variables where the differences are more continuous (such as age, rm and nox). 
