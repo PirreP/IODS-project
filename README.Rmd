@@ -1,9 +1,6 @@
 ## Open Data Science course
 
-So far we have learned to create Rmarkdown files and to knit these into html pages.
-
-<<<<<<< HEAD
 Link to my course-diary: (https://PirreP.github.io/IODS-project/)
-=======
+
 Link to my course-diary: https://PirreP.github.io/IODS-project/ .
->>>>>>> 60b69aed6b2a3cf9aff9ff7295b342267d6e6fdf
+
