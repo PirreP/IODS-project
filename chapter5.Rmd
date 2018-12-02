@@ -26,7 +26,7 @@ ggpairs(human)
 corrplot(cor(human))
 ```
 
-From the above plots we can see that the gender ratio between womens and mens labor values are scored to the right (max value 1, so no country has more female labor than men labor). Also life expectancy is skewed to the right. Maternal mortality, adolescent birthrate and parliament femele representation are skewed to ther left. 
+From the above plots we can see that the gender ratio between womens and mens labor values are skewed to the right (max value 1, so no country has more female labor than men labor). Also life expectancy is skewed to the right. Maternal mortality, adolescent birthrate and parliament femele representation are skewed to ther left. 
 
 From the correlation matrix we can see that maternal mortality is strongly correlated with adolescent birthrate. They are both anticorrelated with education and life expectancy (which correlate with each other). Femala/male ratio in education correlates with  education and life expectancy, and anticorrelates with maternal mortality and adoslectent birth rate.
 
