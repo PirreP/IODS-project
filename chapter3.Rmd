@@ -6,7 +6,7 @@ library(dplyr)
 library(gridExtra)
 ```
 
-# Week 3 - Logistic Regression
+# Logistic Regression / Week 3
 
 ```{r load-data, echo = FALSE, message= FALSE, cache = TRUE}
 alc <- read.csv('./data/alc.csv', sep=',', header=TRUE)
@@ -85,7 +85,7 @@ From the above visualizations we can make the following interpretations:
 5) father's education doesn't affect alcohol consumption 
 
 
-# Logistic regression
+## Logistic regression
 
 ```{r logistic regression model, echo=FALSE, comment=FALSE}
 m <- glm(high_use ~ Fedu + famrel + G3 + absences +sex, data = interesting, family = "binomial")
@@ -109,7 +109,7 @@ Interpretation of results:
 
 4) males are more likely to have higher consumption than females
 
-# Predicting alcohol consumption with our model
+## Predicting alcohol consumption with our model
 
 ```{r make predictions, echo=FALSE}
 # predict() the probability of high_use
@@ -130,7 +130,7 @@ table(high_use = interesting$high_use, prediction = interesting$prediction) %>% 
 From the tables above we see that our model predicted quite well the cases where high_use was false (only 4 prosent were false positives). True cases were not predicted as effectively (20% were missed trues).
 The total training error is around 25%, so 75% of the cases were predicted correctly.
 
-# References
+## References
 
 P. Cortez and A. Silva. Using Data Mining to Predict Secondary School Student Performance. In A. Brito and J. Teixeira Eds., Proceedings of 5th FUture BUsiness TEChnology Conference (FUBUTEC 2008) pp. 5-12, Porto, Portugal, April, 2008, EUROSIS, ISBN 978-9077381-39-7
 

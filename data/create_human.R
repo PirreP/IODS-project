@@ -48,7 +48,7 @@ human$GNI <- as.numeric(human$GNI) # values abecame integers instead of doubles 
 
 # keep only the following columns
 keep <-  c("country", "edu2_sex", "labour_sex", "education_exp", "Life_exp", "GNI", "mmortality", "birth_rate", "parliament_repr")
-human <- human %>% select(one_of(keep))
+human <- dplyr::select(human, one_of(keep))
 
 names(human) <- c( "Country", "Edu2.FM", "Labo.FM", "Edu.Exp", "Life.Exp", "GNI", "Mat.Mor", "Ado.Birth", "Parli.F")
 
@@ -59,9 +59,9 @@ human <- human[complete.cases(human), ]
 
 # remove regions (last 7 rows)
 human <- human[-c(155:162),]
-row.names(human) <- human$Country
 
 #change countries as rownames
+row.names(human) <- human$Country
 human <- human[,-1]
 
 #overwrite human-data with the new data

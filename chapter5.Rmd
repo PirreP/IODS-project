@@ -1,0 +1,127 @@
+# Dimensionality reduction techniques  / Week 5
+
+This week were are using dimensionality reduction techniques for studying both numerical and categorical datasets. We will start by studying the 'human' dataset, which is a combination of two datasets, human_developemnt and gender_inenquality, which originate from the United Nations Development Programme. More info about the datasets can be found [here](http://hdr.undp.org/en/content/human-development-index-hdi).
+
+The data consists of 195 countries and 19 variables that describe the countries' human development index and gender inequality. In addition to the original variables, we have also added two variables, edu2_sex=sec_edu_f/sec_edu_m, labour_sex=labour_f/labour_m, which describe the ratio between gender specific education and labour scores.
+
+```{r access libraries, load the human dataset and explore, echo=FALSE, comment= FALSE, warning=FALSE, message=FALSE, fig.width = 10, fig.height = 10}
+# access the MASS package
+library(FactoMineR)
+library(ggplot2)
+library(GGally)
+library(corrplot)
+library(dplyr)
+library(tidyr)
+
+# load the data
+human <- read.csv('./data/human.csv', header=TRUE, sep=',')
+# change countries to rownames
+row.names(human) <- human$X
+human <- human[, -1]
+
+#overview of the data
+summary(human, main='summary of "human" data')
+
+ggpairs(human)
+corrplot(cor(human))
+```
+
+From the above plots we can see that the gender ratio between womens and mens labor values are scored to the right (max value 1, so no country has more female labor than men labor). Also life expectancy is skewed to the right. Maternal mortality, adolescent birthrate and parliament femele representation are skewed to ther left. 
+
+From the correlation matrix we can see that maternal mortality is strongly correlated with adolescent birthrate. They are both anticorrelated with education and life expectancy (which correlate with each other). Femala/male ratio in education correlates with  education and life expectancy, and anticorrelates with maternal mortality and adoslectent birth rate.
+
+
+##Principal component analysis
+
+We will now use a method called principal component analysis for reducing the number of variables in the data. PCA will reduce the dimensionality of the data by creating principal components that explain the different dimensions of variability in the data. PCA1 explains most of the variability, PCA2 the second most and so on. Let's use bipolots for visualizing the components, we are doing this first without scaling the data and then with the scaled data:
+
+```{r PCA with the original data, echo=FALSE, fig.width = 10, fig.height = 10}
+# perform principal component analysis (with the SVD method)
+pca_human <- prcomp(human)
+s <- summary(pca_human)
+#s
+
+# rounded percetanges of variance captured by each PC
+pca_pr <- round(100*s$importance[2, ], digits = 1)
+
+# print out the percentages of variance
+#pca_pr
+
+# create object pc_lab to be used as axis labels
+pca_lab <- paste0(names(pca_pr), " (", pca_pr, "%)")
+
+# draw a biplot
+biplot(pca_human, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pca_lab[1], ylab = pca_lab[2], main='PCA no scaling')
+
+```
+
+From the plot above we can see that in the non-standardized data, maternal mortality seems to explain most of the variability in the data. It is strongly correlated with PC1 which explains 92% of the variance in the data. PCA2 only explains 6% of the variance and is mostly correlated wiht GNI. We can predict that these results are highly affected by the difference in the variance of the non-standardized variables. Maternal mortality ranges from 1 to 1100, so it has clearly higher variance than the other variables, and hence it of course explains most of the variance in the data. 
+
+Let's now standardize the data and do the PCA again.
+
+
+```{r PCA with scalesd data, echo=FALSE, fig.width = 10, fig.height = 10}
+# scale the data
+human_scaled <- scale(human)
+#summary(human_scaled)
+
+pca_human_scaled <- prcomp(human_scaled)
+s <- summary(pca_human_scaled)
+#s
+
+# rounded percetanges of variance captured by each PC
+pca_pr_scaled <- round(100*s$importance[2, ], digits = 1)
+
+# print out the percentages of variance
+#pca_pr
+
+# create object pc_lab to be used as axis labels
+pca_lab <- paste0(names(pca_pr_scaled), " (", pca_pr_scaled, "%)")
+
+# draw a biplot
+biplot(pca_human_scaled, cex = c(0.8, 1), col = c("grey40", "deeppink2"), xlab = pca_lab[1], ylab = pca_lab[2], main='PCA scaled')
+```
+
+
+After standardization we can see that the variance in the data is actually explained by other factors as well. PC1 explains almost half of the variance in the data, and it is formed by life expectancy, education ratio between the genders, and education expectancy, maternal mortality, and birthrate. Hence we can say that education in general explains most of the variance in the data. Education is likely to also decrease the maternal mortality and birthrate.
+
+PC2 explains 16% of the variance, and it is formed by female participation in the parliament and gender ratio in the labour. This component mainly reflects the equality of women and men in the society, and the chances of women to participate in decision making.
+
+
+## MCA with categorical variables (Tea dataset)
+
+Let's now explore a categorical data set. We are using 'tea' data set as an example. Tea is included in the FactoMineR package and more information about it can be found [here](https://rdrr.io/cran/FactoMineR/man/tea.html). 
+
+```{r load and visualize the dataset, echo=FALSE, fig.width = 10, fig.height = 10}
+data(tea)
+# column names to keep in the dataset
+keep_columns <- c("Tea", "sex", "SPC", "price" , "age_Q", "where" )
+
+# select the 'keep_columns' to create a new dataset
+tea_time <- dplyr::select(tea, one_of(keep_columns))
+
+# look at the summaries and structure of the data
+#summary(tea_time)
+#str(tea_time)
+
+# visualize the dataset
+gather(tea_time) %>% ggplot(aes(value)) + geom_bar() + facet_wrap("key", scales = "free") + theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 8))
+```
+We now have a dataset with 6 categorical variables that describe the different aspects of tea consumption. There are 300 observations. Let's now do MCA for the dataset. MCA corresponds PCA but it can be used factorized variables. 
+
+```{r MCA, echo=FALSE, fig.width = 10, fig.height = 10}
+
+# multiple correspondence analysis
+mca <- MCA(tea_time, graph = FALSE)
+
+# summary of the model
+summary(mca)
+
+# visualize MCA
+plot(mca, invisible=c("var"), habillage = "quali")
+plot(mca, invisible=c("ind"), habillage = "quali" )
+```
+It seems that the best components only explain 10 and 9 % percent of the variability in the data. From the first MCA plot that contains the individuals, we can see that they seem to form two clusters that both affect those dimensions. 
+
+None of the selected varibles seem to explain the variance very clearly, the MCA plot with the variables is quite scattered, no conclusions can be drawn from this data. The +60 age class and non-workers seem to stand out from the rest of the group, but we should probably choose some other variables to explain how they differ from the other consumers.
+

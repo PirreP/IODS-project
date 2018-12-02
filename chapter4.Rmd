@@ -1,8 +1,8 @@
-## Clustering and classification / week 4
+# Clustering and classification / week 4
 
 This week were using a dataset called 'Boston' from the MASS R package. 'Boston' Has the housing values of Boston suburbs, including 14 variables that describe the value of the apartments and the socioeconomical status of the area, such as rate of criminality, per capita crime rate by tow, taxes and pupil-teacher rate per town. There are 506 rows in the dataset. The values are numerical, some of them being integers. More detailed description of the varibales can be found in the [R documentation](https://stat.ethz.ch/R-manual/R-devel/library/MASS/html/Boston.html). 
 
-# Boston dataset summary
+## Boston dataset summary
 
 ```{r access libraries, load the Boston dataset and explore, echo=FALSE, fig.width = 12, fig.height = 12}
 # access the MASS package
@@ -21,7 +21,7 @@ pairs(Boston, main= 'Boston paired scatterplots')
 
 
 
-# Scaled data
+## Scaled data
 
 ```{r scale data and sumamrize variables, echo=FALSE}
 # scale the data by substracting column means from the values and by dividing with the standard deviation
@@ -82,7 +82,7 @@ test <- dplyr::select(test, -crime)
 
 ```
 
-# Linear discriminant analysis and LDA biplot
+## Linear discriminant analysis and LDA biplot
 
 ```{r plot LDA biplot, echo=FALSE, fig.width = 12, fig.height = 12}
 
@@ -110,7 +110,7 @@ plot(lda.fit, dimen = 2, main='LDA biplot')
 lda.arrows(lda.fit, myscale = 1)
 ```
 
-# Using the model to predict criminality classes in the test dataset
+## Using the model to predict criminality classes in the test dataset
 ```{r predict the crime classes in the test dataset, echo=FALSE}
 # predict classes with test data
 lda.pred <- predict(lda.fit, newdata = test)
@@ -124,7 +124,7 @@ From the plot above we can see that areas with high criminality rate form their 
 From the cross tabulation we can see that the model predicts high criminality very well (as can also be predicted from the plots; high criminality forms its own cluster). Also med_low was predicted quite well (only 3 false positives). However, if the model classifies an observation as med_low, it is very hard to know whether the prediction is correct, as more than half of these predictions are false and the model seems to have a bias towards classifying observations into the med_low class. 
 
 
-# K-means clustering
+## K-means clustering
 ```{r k-means clustering, echo=FALSE, fig.width = 12, fig.height = 12}
 # calculate the euclidean distances from the original scaled Boston dataset
 dist_eu <- dist(boston_scaled_orig)
