@@ -72,7 +72,7 @@ Here we can see the profiles of mean weights in each groups. The mean profiles l
 
 ### Boxplots
 
-```{r boxplots, echo=FALSE}
+```{r, echo=FALSE}
 p1 <- ggplot(RATS, aes(x = factor(Time), y = Weight, fill = Group))
 p2 <- p1 + geom_boxplot(position = position_dodge(width = 0.9))
 p3 <- p2 + theme_bw() + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())
